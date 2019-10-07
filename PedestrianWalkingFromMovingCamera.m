@@ -1,9 +1,9 @@
 function PedestrianWalkingFromMovingCamera()
 % Create system objects used for reading video, loading prerequisite data file, detecting pedestrians, and displaying the results.
-videoFile       = 'Human.mkv';
+imageFile       = 'Human.mp4';
 scaleDataFile   = 'pedScaleTable.mat'; % An auxiliary file that helps to determine the size of a pedestrian at different pixel locations.
 
-obj = setupSystemObjects(videoFile, scaleDataFile);
+obj = setupSystemObjects(imageFile, scaleDataFile);
 
 detector = peopleDetectorACF('caltech');
 
