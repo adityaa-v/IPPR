@@ -31,7 +31,7 @@ end
         % objects in each frame, and playing the video.
 
         % Create a video file reader.
-        obj.reader = vision.VideoFileReader('Human.mp4');
+        obj.reader = vision.VideoFileReader('StillHuman.mp4');
 
         % Create two video players, one to display the video,
         % and one to display the foreground mask.
