@@ -13,3 +13,18 @@ Once the coding was implemented, Matlab was able to load the classifiers success
 For the project, the roles of each individual in the group were distributed evenly. 
 
 The coding sectionn in Matlab was CONTRIBUTED equally amongst all the members. All other sections were distributed. The roles of each person is descibed below.
+
+Video Presentation Powerpoint: 
+
+Classifier 1: 
+Clasifier 2:
+Classifier 3: 
+Classifier 4: 
+
+Evaluation Method 1 (MOTA): ##Adam##
+Evaluation Method 2 (MOTP): Utsav
+Evaluation Method 3 (RANSAC) : Anthony
+
+
+
+
