@@ -1,10 +1,5 @@
 # IPPR
 Final assignment
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
   
 The purpose of the second assignment was the "Project Implementation" section. 
 In this section, we tried to implement the different Classifiers and Evaluate these through coding. 
@@ -19,16 +14,17 @@ The coding sectionn in Matlab was CONTRIBUTED equally amongst all the members. A
 
 Video Presentation Powerpoint: 
 
-<<<<<<< Updated upstream
-Classifier 1: 
+Problem: Adam
 
-Clasifier 2: Utsav
+Why Tracking: Aditya
 
-Classifier 3: 
+Classifier 1 (Kalman Filter): Jenny
 
-Classifier 4: 
-=======
->>>>>>> Stashed changes
+Clasifier 2 (Harris Corner Detector): Utsav
+
+Classifier 3 (Centroid): 
+
+Classifier 4 (Camshift): 
 
 Evaluation Method 1 (MOTA): Adam
 
@@ -36,22 +32,17 @@ Evaluation Method 2 (MOTP): Utsav
 
 Evaluation Method 3 (RANSAC) : Anthony
 
-<<<<<<< Updated upstream
-Code Explanation 1: Aditya
+Code Explanation 1: Jenny
 
-Code Explanation 2: Jenny
+Code Explanation 2: Aditya
 
 Alternative Solution 1: Chanwoo 
 
 Alternative Solution 2: Prabh 
-=======
->>>>>>> Stashed changes
+
+Conclusion: Aditya
 
 Additional Slides: Anthony 
 
 
 
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
