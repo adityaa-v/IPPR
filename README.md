@@ -17,14 +17,21 @@ The coding sectionn in Matlab was CONTRIBUTED equally amongst all the members. A
 Video Presentation Powerpoint: 
 
 Classifier 1: 
-Clasifier 2:
+Clasifier 2: Utsav
 Classifier 3: 
 Classifier 4: 
 
-Evaluation Method 1 (MOTA): ##Adam##
+Evaluation Method 1 (MOTA): Adam
 Evaluation Method 2 (MOTP): Utsav
 Evaluation Method 3 (RANSAC) : Anthony
 
+Code Explanation 1: Aditya
+Code Explanation 2: Jenny
+
+Alternative Solution 1: Chanwoo 
+Alternative Solution 2: Prabh 
+
+Additional Slides: Anthony 
 
 
 
