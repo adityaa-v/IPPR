@@ -171,21 +171,18 @@ end
         if isempty(tracks)
             return;
         end
-
+        % If tracks list is empty ignore the code underneath
         invisibleForTooLong = 20;
         % Variable for limit of track being invisible
         ageThreshold = 8;
-        %Variable for age 
-       
+        %Variable for age        
         ages = [tracks(:).age];
         totalVisibleCounts = [tracks(:).totalVisibleCount];
         visibility = totalVisibleCounts ./ ages;
-        % Compute the fraction of the track's age for which it was visible    
-        
+        % Compute the fraction of the track's age for which it was visible           
         lostInds = (ages < ageThreshold & visibility < 0.6) | ...
             [tracks(:).consecutiveInvisibleCount] >= invisibleForTooLong;
-        % Find the indices of 'lost' tracks.        
-        
+        % Find the indices of 'lost' tracks by using assigned variables                
         tracks = tracks(~lostInds);
         % Delete lost tracks.
     end
@@ -193,17 +190,15 @@ end
     function createNewTracks()
         centroids = centroids(unassignedDetections, :);
         bboxes = bboxes(unassignedDetections, :);
-
+        % Variables for unassigned detections
         for i = 1:size(centroids, 1)
-
+        % Loop through centroids
             centroid = centroids(i,:);
             bbox = bboxes(i, :);
-
-            % Create a Kalman filter object.
+            % looping through unassigned detections variable         
             kalmanFilter = configureKalmanFilter('ConstantVelocity', ...
                 centroid, [200, 50], [100, 25], 100);
-
-            % Create a new track.
+            % Create a Kalman filter object.           
             newTrack = struct(...
                 'id', nextId, ...
                 'bbox', bbox, ...
@@ -211,63 +206,50 @@ end
                 'age', 1, ...
                 'totalVisibleCount', 1, ...
                 'consecutiveInvisibleCount', 0);
-
-            % Add it to the array of tracks.
+            % Create a new track.
             tracks(end + 1) = newTrack;
-
-            % Increment the next id.
+            % Add it to the array of tracks.
             nextId = nextId + 1;
+            % Increment the next id.
         end
     end
 
-    function displayTrackingResults()
-        % Convert the frame and the mask to uint8 RGB.
+    function displayTrackingResults()        
         frame = im2uint8(frame);
         mask = uint8(repmat(mask, [1, 1, 3])) .* 255;
-
-        minVisibleCount = 8;
-        if ~isempty(tracks)
-
-            % Noisy detections tend to result in short-lived tracks.
-            % Only display tracks that have been visible for more than
-            % a minimum number of frames.
+        % Convert the frame and the mask to uint8 RGB
+        minVisibleCount = 8; % Variable for min visible count
+        if ~isempty(tracks) % if condition true when tracks is not a field           
             reliableTrackInds = ...
                 [tracks(:).totalVisibleCount] > minVisibleCount;
             reliableTracks = tracks(reliableTrackInds);
+            % Noisy detections tend to result in short-lived tracks.
+            % Only display tracks that have been visible for more than
+            % a minimum number of frames.
 
             % Display the objects. If an object has not been detected
             % in this frame, display its predicted bounding box.
             if ~isempty(reliableTracks)
                 % Get bounding boxes.
                 bboxes = cat(1, reliableTracks.bbox);
-
-                % Get ids.
-                ids = int32([reliableTracks(:).id]);
-
+                ids = int32([reliableTracks(:).id]);% Displays ID's                
+                labels = cellstr(int2str(ids'));
                 % Create labels for objects indicating the ones for
                 % which we display the predicted rather than the actual
-                % location.
-                labels = cellstr(int2str(ids'));
+                % location
                 predictedTrackInds = ...
                     [reliableTracks(:).consecutiveInvisibleCount] > 0;
                 isPredicted = cell(size(labels));
                 isPredicted(predictedTrackInds) = {' predicted'};
-                labels = strcat(labels, isPredicted);
-
-                % Draw the objects on the frame.
+                labels = strcat(labels, isPredicted);               
                 frame = insertObjectAnnotation(frame, 'rectangle', ...
-                    bboxes, labels);
-
-                % Draw the objects on the mask.
+                    bboxes, labels); % Draw the objects on the frame      
                 mask = insertObjectAnnotation(mask, 'rectangle', ...
-                    bboxes, labels);
+                    bboxes, labels);% Draw the objects on the mask
             end
         end
-
         % Display the mask and the frame.
         obj.maskPlayer.step(mask);
         obj.videoPlayer.step(frame);
     end
-
-
 end

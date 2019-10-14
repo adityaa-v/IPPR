@@ -156,11 +156,14 @@ end
 
     function updateUnassignedTracks()
         for i = 1:length(unassignedTracks)
-            % 
+        % Loops through unassigned tracks
             ind = unassignedTracks(i);
+            % Variable for looping within unassignedTracks
             tracks(ind).age = tracks(ind).age + 1;
+            % Increase age by 1
             tracks(ind).consecutiveInvisibleCount = ...
                 tracks(ind).consecutiveInvisibleCount + 1;
+            % Increase consecutive invisible count by 1
         end
     end
 
@@ -168,28 +171,29 @@ end
         if isempty(tracks)
             return;
         end
-
+        % If tracks list is empty ignore the code underneath
         invisibleForTooLong = 20;
+        % Variable for limit of track being invisible
         ageThreshold = 8;
-
-        % Compute the fraction of the track's age for which it was visible.
+        %Variable for age        
         ages = [tracks(:).age];
         totalVisibleCounts = [tracks(:).totalVisibleCount];
         visibility = totalVisibleCounts ./ ages;
-
-        % Find the indices of 'lost' tracks.
+        % Compute the fraction of the track's age for which it was visible           
         lostInds = (ages < ageThreshold & visibility < 0.6) | ...
             [tracks(:).consecutiveInvisibleCount] >= invisibleForTooLong;
-
-        % Delete lost tracks.
+        % Find the indices of 'lost' tracks by using assigned variables                
         tracks = tracks(~lostInds);
+        % Delete lost tracks.
     end
 
     function createNewTracks()
         centroids = centroids(unassignedDetections, :);
         bboxes = bboxes(unassignedDetections, :);
+        % Variables for unassigned detections
 
         for i = 1:size(centroids, 1)
+        % Loop through centroids
 
             centroid = centroids(i,:);
             bbox = bboxes(i, :);
