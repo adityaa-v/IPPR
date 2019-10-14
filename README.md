@@ -22,7 +22,7 @@ Classifier 1 (Kalman Filter): Jenny
 
 Clasifier 2 (Harris Corner Detector): Utsav
 
-Classifier 3 (Centroid): 
+Classifier 3 (Centroid): Adam and Anthony
 
 Classifier 4 (Camshift): Utsav
 
