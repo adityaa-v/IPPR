@@ -1,27 +1,28 @@
 function IPPR_A2_Tracking()
 
-% Main function: calls upon nested functions to track moving objects
-% in video and display results via bounding boxes and binary mask 
+% Main fucntion: calls upon nested functions to create System objects
+% that read the video, detect and track moving objects across each video 
+% frame and display the results.
 
 obj = setupSystemObjects();  % create System objects
 
-tracks = initialiseTracks(); % create an empty array of tracks
+tracks = initializeTracks(); % create an empty array of tracks
 
-nextId = 1; % next track ID 
+nextId = 1; % ID of the next track
+
+% loop while each video frame is read, 
+%	1. detect objects in frame
+% 	2. predtict new location of tracks 
+%   3. assign moving objects to a track 
+%   4. update location of assigned tracks 
+%   5. update Unassigned Tracks ;
+%   6. delete lost tracks 
+%   7. create new tracks 
+%   8. display results via tracking boxes 
+% end loop when video runs out of frames to read
 
 while ~isDone(obj.reader)
     
-    % loop while each video frame is read, 
-    %	1. detect objects in frame
-    % 	2. predict new location of assigned objects
-    %   3. assign newly detected moving objects to a track 
-    %   4. update location of assigned tracks 
-    %   5. update unassigned tracks 
-    %   6. delete tracks with no detection
-    %   7. create new tracks 
-    %   8. display results via bounding boxes and binary mask 
-    % end loop when video runs out of frames to read
-
     frame = readFrame();
     [centroids, bboxes, mask] = detectObjects(frame);
     predictNewLocationsOfTracks();
@@ -36,42 +37,42 @@ while ~isDone(obj.reader)
     
 end
 
-    function obj = setupSystemObjects() %create needed system objects
-        
-        % load the video using a video reader object
-        % change name to desired video to analyse in single quotation marks
-        % e.g. 'newVideo.mp4' 
+
+    function obj = setupSystemObjects()
+        % Initialize Video I/O
+        % Create objects for reading a video from a file, drawing the tracked
+        % objects in each frame, and playing the video.
+
+        % Create a video file reader.
         obj.reader = vision.VideoFileReader('StillHuman.mp4');
-        
-        % create video player - displays the foreground mask (binary) 
+
+        % Create two video players, one to display the video,
+        % and one to display the foreground mask.
         obj.maskPlayer = vision.VideoPlayer('Position', [740, 400, 700, 400]);
-       
-        % create player - displays the video normally with bounding boxes 
         obj.videoPlayer = vision.VideoPlayer('Position', [20, 400, 700, 400]);
 
-        % create detector (foreground detection) - distinguishes
-        % moving objects from the background 
+        % Create System objects for foreground detection and blob analysis
+
+        % The foreground detector is used to segment moving objects from
+        % the background. It outputs a binary mask, where the pixel value
+        % of 1 corresponds to the foreground and the value of 0 corresponds
+        % to the background.
+
         obj.detector = vision.ForegroundDetector('NumGaussians', 3, ...
             'NumTrainingFrames', 40, 'MinimumBackgroundRatio', 0.7);
-        
-        % create algorithm (blob analysis) - finds connected groups of foreground 
-        % pixels that are likely to correspond to moving objects and compute their
-        % characteristics.
+
+        % Connected groups of foreground pixels are likely to correspond to moving
+        % objects.  The blob analysis System object is used to find such groups
+        % (called 'blobs' or 'connected components'), and compute their
+        % characteristics, such as area, centroid, and the bounding box.
+
         obj.blobAnalyser = vision.BlobAnalysis('BoundingBoxOutputPort', true, ...
             'AreaOutputPort', true, 'CentroidOutputPort', true, ...
             'MinimumBlobArea', 400);
     end
 
-    function tracks = initialiseTracks() 
-     
-        % create an empty array of tracks with fields:
-        %   - ID 
-        %   - Bbox
-        %   - Kalman filter
-        %   - age
-        %   - totalVisibleCount
-        %   - consecutiveInvisibleCount
-        
+    function tracks = initializeTracks()
+        % create an empty array of tracks
         tracks = struct(...
             'id', {}, ...
             'bbox', {}, ...
@@ -79,18 +80,15 @@ end
             'age', {}, ...
             'totalVisibleCount', {}, ...
             'consecutiveInvisibleCount', {});
-        
     end
 
     function frame = readFrame()
-        
-        % run obj.reader algorithm
         frame = obj.reader.step();
     end
 
     function [centroids, bboxes, mask] = detectObjects(frame)
 
-        % run foreground detector in each frame
+        % Detect foreground.
         mask = obj.detector.step(frame);
 
         % Apply morphological operations to remove noise and fill in holes.
@@ -98,7 +96,7 @@ end
         mask = imclose(mask, strel('rectangle', [15, 15]));
         mask = imfill(mask, 'holes');
 
-        % run blob analysis algorithm  
+        % Perform blob analysis to find connected components.
         [~, centroids, bboxes] = obj.blobAnalyser.step(mask);
     end
 
