@@ -24,7 +24,7 @@ Clasifier 2 (Harris Corner Detector): Utsav
 
 Classifier 3 (Centroid): 
 
-Classifier 4 (Camshift): 
+Classifier 4 (Camshift): Utsav
 
 Evaluation Method 1 (MOTA): Adam
 
@@ -32,13 +32,13 @@ Evaluation Method 2 (MOTP): Utsav
 
 Evaluation Method 3 (RANSAC) : Anthony
 
-Code Explanation 1: Jenny
+Code Explanation part 1: Jenny
 
-Code Explanation 2: Aditya
+Code Explanation part 2: Aditya
 
-Alternative Solution 1: Chanwoo 
+Alternative Solution part 1: Chanwoo 
 
-Alternative Solution 2: Prabh 
+Alternative Solution part 2: Prabh 
 
 Conclusion: Aditya
 
