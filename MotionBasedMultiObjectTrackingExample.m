@@ -105,62 +105,65 @@ end
     end
 
     function [assignments, unassignedTracks, unassignedDetections] = ...
-            detectionToTrackAssignment()
-        
-        % Above function header returns output assignment,
-        % unassignedtracks, and unassigneddetections with the fucntion name
-        % declared as detectionToTrackAssignment
-        
-        nTracks = length(tracks); %local variable for tracking
-        nDetections = size(centroids, 1); %number of detections per tracked per centroid
-
-        % Compute the cost of assigning each detection to each track.
+            detectionToTrackAssignment()    
+        % Above function header returns output from other functions
+        nTracks = length(tracks); 
+        % Local variable for tracking
+        nDetections = size(centroids, 1); 
+        % Number of detections per tracked per centroid       
         cost = zeros(nTracks, nDetections);
-        
+        % Compute the cost of assigning each detection to each track.
+        % Cost is negative log likelihood of a detection eqaul to a track
         for i = 1:nTracks
             cost(i, :) = distance(tracks(i).kalmanFilter, centroids);
         end
-        %For loop which uses kalmanFilter and loops through each track
-
-        % Solve the assignment problem.
+        % For loop which uses kalmanFilter and loops through each track
         costOfNonAssignment = 20;
-        %variable for the below command. 20 has been chosen as 
+        % Value of non assignment depends on the range of values returned 
+        % by the distance method of the vision.KalmanFilter. Value has been
+        % tuned experimentally.
         [assignments, unassignedTracks, unassignedDetections] = ...
             assignDetectionsToTracks(cost, costOfNonAssignment);
+        % Assigning the matrix with the values of the tack
     end
 
     function updateAssignedTracks()
-        numAssignedTracks = size(assignments, 1);
+        numAssignedTracks = size(assignments, 1); 
+        % Variable for the count
+        % and age of the track by 1
         for i = 1:numAssignedTracks
-            trackIdx = assignments(i, 1);
-            detectionIdx = assignments(i, 2);
-            centroid = centroids(detectionIdx, :);
+            trackIdx = assignments(i, 1); 
+            % Assigns track ID
+            detectionIdx = assignments(i, 2); 
+            % Assigns detection ID
+            centroid = centroids(detectionIdx, :); 
+            % Assigns centroid to detection ID
             bbox = bboxes(detectionIdx, :);
-
             % Correct the estimate of the object's location
             % using the new detection.
             correct(tracks(trackIdx).kalmanFilter, centroid);
-
-            % Replace predicted bounding box with detected
-            % bounding box.
+            % Replace predicted bounding box with detected bounding box.
             tracks(trackIdx).bbox = bbox;
-
             % Update track's age.
             tracks(trackIdx).age = tracks(trackIdx).age + 1;
-
             % Update visibility.
             tracks(trackIdx).totalVisibleCount = ...
                 tracks(trackIdx).totalVisibleCount + 1;
             tracks(trackIdx).consecutiveInvisibleCount = 0;
+            % Count for the number of visible tracks
         end
     end
 
     function updateUnassignedTracks()
         for i = 1:length(unassignedTracks)
+        % Loops through unassigned tracks
             ind = unassignedTracks(i);
+            % Variable for looping within unassignedTracks
             tracks(ind).age = tracks(ind).age + 1;
+            % Increase age by 1
             tracks(ind).consecutiveInvisibleCount = ...
                 tracks(ind).consecutiveInvisibleCount + 1;
+            % Increase consecutive invisible count by 1
         end
     end
 
@@ -170,19 +173,21 @@ end
         end
 
         invisibleForTooLong = 20;
+        % Variable for limit of track being invisible
         ageThreshold = 8;
-
-        % Compute the fraction of the track's age for which it was visible.
+        %Variable for age 
+       
         ages = [tracks(:).age];
         totalVisibleCounts = [tracks(:).totalVisibleCount];
         visibility = totalVisibleCounts ./ ages;
-
-        % Find the indices of 'lost' tracks.
+        % Compute the fraction of the track's age for which it was visible    
+        
         lostInds = (ages < ageThreshold & visibility < 0.6) | ...
             [tracks(:).consecutiveInvisibleCount] >= invisibleForTooLong;
-
-        % Delete lost tracks.
+        % Find the indices of 'lost' tracks.        
+        
         tracks = tracks(~lostInds);
+        % Delete lost tracks.
     end
 
     function createNewTracks()
