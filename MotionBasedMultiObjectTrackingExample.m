@@ -106,18 +106,25 @@ end
 
     function [assignments, unassignedTracks, unassignedDetections] = ...
             detectionToTrackAssignment()
-
-        nTracks = length(tracks);
-        nDetections = size(centroids, 1);
+        
+        % Above function header returns output assignment,
+        % unassignedtracks, and unassigneddetections with the fucntion name
+        % declared as detectionToTrackAssignment
+        
+        nTracks = length(tracks); %local variable for tracking
+        nDetections = size(centroids, 1); %number of detections per tracked per centroid
 
         % Compute the cost of assigning each detection to each track.
         cost = zeros(nTracks, nDetections);
+        
         for i = 1:nTracks
             cost(i, :) = distance(tracks(i).kalmanFilter, centroids);
         end
+        %For loop which uses kalmanFilter and loops through each track
 
         % Solve the assignment problem.
         costOfNonAssignment = 20;
+        %variable for the below command. 20 has been chosen as 
         [assignments, unassignedTracks, unassignedDetections] = ...
             assignDetectionsToTracks(cost, costOfNonAssignment);
     end

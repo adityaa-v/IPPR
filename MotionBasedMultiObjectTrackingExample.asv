@@ -1,6 +1,7 @@
 function MotionBasedMultiObjectTrackingExample()
 % Create System objects used for reading video, detecting moving objects,
 % and displaying the results.
+
 obj = setupSystemObjects();
 
 tracks = initializeTracks(); % Create an empty array of tracks.
@@ -30,9 +31,7 @@ end
         % objects in each frame, and playing the video.
 
         % Create a video file reader.
-        videoFile = 'Human.mp4';
-        implay(videoFile);
-        obj.reader = vision.VideoFileReader('Human.mp4');
+        obj.reader = vision.VideoFileReader('StillHuman.mp4');
 
         % Create two video players, one to display the video,
         % and one to display the foreground mask.
@@ -107,15 +106,21 @@ end
 
     function [assignments, unassignedTracks, unassignedDetections] = ...
             detectionToTrackAssignment()
-
+        
+        % Above function header returns output assignment,
+        % unassignedtracks, and unassigneddetections with the fucntion name
+        % declared as detectionToTrackAssignment
+        
         nTracks = length(tracks);
         nDetections = size(centroids, 1);
 
         % Compute the cost of assigning each detection to each track.
         cost = zeros(nTracks, nDetections);
+        
         for i = 1:nTracks
             cost(i, :) = distance(tracks(i).kalmanFilter, centroids);
         end
+        %For loop which uses kalmanFilter
 
         % Solve the assignment problem.
         costOfNonAssignment = 20;
