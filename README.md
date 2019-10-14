@@ -1,5 +1,8 @@
 # IPPR
 Final assignment
+
+Group members:
+Aditya Verma 12948511
   
 The purpose of the second assignment was the "Project Implementation" section. 
 In this section, we tried to implement the different Classifiers and Evaluate these through coding. 
