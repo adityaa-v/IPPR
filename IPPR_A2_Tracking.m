@@ -1,7 +1,7 @@
 function IPPR_A2_Tracking()
 
-% Main function: calls upon nested functions to track moving objects
-% in video and display results via bounding boxes and binary mask 
+% Main function: calls upon nested functions to track moving objects 
+% in video and display results via bounding boxes and binary mask
 
 obj = setupSystemObjects();  % create System objects
 
@@ -11,15 +11,15 @@ nextId = 1; % next track ID
 
 while ~isDone(obj.reader)
     
-    % loop while each video frame is read, 
-    %	1. detect objects in frame
-    % 	2. predict new location of assigned objects
-    %   3. assign newly detected moving objects to a track 
-    %   4. update location of assigned tracks 
-    %   5. update unassigned tracks 
-    %   6. delete tracks with no detection
-    %   7. create new tracks 
-    %   8. display results via bounding boxes and binary mask 
+    % (loop) while each video frame is read, 
+    % 1. detect objects in frame
+    % 2. predict new location of assigned objects
+    % 3. assign newly detected moving objects to a track 
+    % 4. update location of assigned tracks 
+    % 5. update unassigned tracks 6. delete
+    % 6. tracks with no detection 
+    % 7. create new tracks 
+    % 8. display results via bounding boxes and binary mask
     % end loop when video runs out of frames to read
 
     frame = readFrame();
@@ -36,7 +36,7 @@ while ~isDone(obj.reader)
     
 end
 
-    function obj = setupSystemObjects() %create needed system objects
+    function obj = setupSystemObjects() 
         
         % load the video using a video reader object
         % change name to desired video to analyse in single quotation marks
@@ -49,21 +49,21 @@ end
         % create player - displays the video normally with bounding boxes 
         obj.videoPlayer = vision.VideoPlayer('Position', [20, 400, 700, 400]);
 
-        % create detector (foreground detection) - distinguishes
-        % moving objects from the background 
+        % create detector (foreground detection) - distinguishes moving
+        % objects from the background
         obj.detector = vision.ForegroundDetector('NumGaussians', 3, ...
             'NumTrainingFrames', 40, 'MinimumBackgroundRatio', 0.7);
         
-        % create algorithm (blob analysis) - finds connected groups of foreground 
-        % pixels that are likely to correspond to moving objects and compute their
-        % characteristics.
+        % create detector (blob analysis) - finds connected groups of
+        % foreground pixels that are likely to correspond to moving objects
+        % and compute their characteristics.
         obj.blobAnalyser = vision.BlobAnalysis('BoundingBoxOutputPort', true, ...
             'AreaOutputPort', true, 'CentroidOutputPort', true, ...
             'MinimumBlobArea', 400);
     end
 
     function tracks = initialiseTracks() 
-     
+    
         % create an empty array of tracks with fields:
         %   - ID 
         %   - Bbox
@@ -84,8 +84,9 @@ end
 
     function frame = readFrame()
         
-        % run obj.reader algorithm
+        % run obj.reader -> reads each frame in video
         frame = obj.reader.step();
+        
     end
 
     function [centroids, bboxes, mask] = detectObjects(frame)
@@ -93,7 +94,7 @@ end
         % run foreground detector in each frame
         mask = obj.detector.step(frame);
 
-        % Apply morphological operations to remove noise and fill in holes.
+        % apply morphological filters 
         mask = imopen(mask, strel('rectangle', [3,3]));
         mask = imclose(mask, strel('rectangle', [15, 15]));
         mask = imfill(mask, 'holes');
@@ -103,19 +104,20 @@ end
     end
 
     function predictNewLocationsOfTracks()
+        
+        % loop for every track
         for i = 1:length(tracks)
             bbox = tracks(i).bbox;
 
-            % Predict the current location of the track.
+            % predict the current location of the track
             predictedCentroid = predict(tracks(i).kalmanFilter);
 
-            % Shift the bounding box so that its center is at
-            % the predicted location.
+            % change location of bounding box to centre of new predicted
+            % location
             predictedCentroid = int32(predictedCentroid) - bbox(3:4) / 2;
             tracks(i).bbox = [predictedCentroid, bbox(3:4)];
         end
     end
-
 
     function [assignments, unassignedTracks, unassignedDetections] = ...
             detectionToTrackAssignment()    
