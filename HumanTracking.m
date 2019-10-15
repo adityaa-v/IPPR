@@ -1,4 +1,4 @@
-function MotionBasedMultiObjectTrackingExample()
+function HumanTracking()
 % Create System objects used for reading video, detecting moving objects,
 % and displaying the results.
 
