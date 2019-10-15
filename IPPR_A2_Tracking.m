@@ -3,11 +3,14 @@ function IPPR_A2_Tracking()
 % Main function: calls upon nested functions to track moving objects 
 % in video and display results via bounding boxes and binary mask
 
+% Instructions: 
+% Before running this script, install the "Computer Vision Toolbox" add-on
+
 obj = setupSystemObjects();  % create System objects
 
 tracks = initialiseTracks(); % create an empty array of tracks
 
-nextId = 1; % next track ID 
+nextId = 1; % next track ID intiialised value 
 
 while ~isDone(obj.reader)
     
