@@ -13,16 +13,15 @@ Once the coding was implemented, Matlab was able to load the classifiers success
 
 For the project, the roles of each individual in the group were distributed evenly. 
 
-The coding sectionn in Matlab was CONTRIBUTED equally amongst all the members. All other sections were distributed. The roles of each person is descibed below.
-
-Video Presentation Powerpoint: 
+The coding sectionn in Matlab was CONTRIBUTED equally amongst all the members. All other sections were distributed. The roles of each person is descibed below. 
 
 
-MATLAB REQUIREMENTS
+MATLAB REQUIREMENTS BEFORE RUNNING CODE
 
 	- The code requires Computer Vision Add On in MATLAB. 
 
 	- To install this on MATLAB:
+
 	1. click on the HOME tab 
 	2. Click "Add-Ons"
 	3. search for "Computer Vision Toolbox" and install this.
@@ -30,38 +29,41 @@ MATLAB REQUIREMENTS
 
 HOW TO RUN THE CODE:
 
-	1. Click run.
+	1. Open the file 'HumanTracking.m'. NOTE: The dataset is local and no code has to be changed to read the dataset.
+	2. Click run.
 
 
-Problem: Adam
+Video Presentation Powerpoint:
 
-Why Tracking: Aditya
+	Problem: Adam
 
-Classifier 1 (Kalman Filter): Jenny
+	Why Tracking: Utsav
 
-Clasifier 2 (Harris Corner Detector): Utsav
+	Classifier 1 (Kalman Filter): Jenny
 
-Classifier 3 (Centroid): Adam and Anthony
+	Clasifier 2 (Harris Corner Detector): Utsav
 
-Classifier 4 (Camshift): Utsav
+	Classifier 3 (Centroid): Adam and Anthony
 
-Evaluation Method 1 (MOTA): Adam
+	Classifier 4 (Camshift): Chanwoo
 
-Evaluation Method 2 (MOTP): Utsav
+	Evaluation Method 1 (MOTA): Adam
 
-Evaluation Method 3 (RANSAC) : Anthony
+	Evaluation Method 2 (MOTP): Utsav
 
-Code Explanation part 1: Jenny
+	Evaluation Method 3 (RANSAC): Anthony
 
-Code Explanation part 2: Aditya
+	Code Explanation part 1: Jenny
 
-Alternative Solution part 1: Chanwoo 
+	Code Explanation part 2: Aditya
 
-Alternative Solution part 2: Prabh 
+	Alternative Solution part 1: Chanwoo 
 
-Conclusion: Aditya
+	Alternative Solution part 2: Prabh 
 
-Additional Slides: Anthony 
+	Conclusion: Aditya
+
+	Additional Slides: Anthony 
 
 
 
