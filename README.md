@@ -1,5 +1,8 @@
 # IPPR
 Final assignment
+
+Group members:
+Aditya Verma 12948511,Adam Clark 12946190
   
 The purpose of the second assignment was the "Project Implementation" section. 
 In this section, we tried to implement the different Classifiers and Evaluate these through coding. 
@@ -22,7 +25,7 @@ Classifier 1 (Kalman Filter): Jenny
 
 Clasifier 2 (Harris Corner Detector): Utsav
 
-Classifier 3 (Centroid): 
+Classifier 3 (Centroid): Adam and Anthony
 
 Classifier 4 (Camshift): Utsav
 
