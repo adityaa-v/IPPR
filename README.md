@@ -17,6 +17,17 @@ The coding sectionn in Matlab was CONTRIBUTED equally amongst all the members. A
 
 Video Presentation Powerpoint: 
 
+
+MATLAB REQUIREMENTS
+
+	- The code requires Computer Vision Add On in MATLAB. 
+	
+
+HOW TO RUN THE CODE:
+
+	1. 
+
+
 Problem: Adam
 
 Why Tracking: Aditya
