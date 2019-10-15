@@ -21,11 +21,16 @@ Video Presentation Powerpoint:
 MATLAB REQUIREMENTS
 
 	- The code requires Computer Vision Add On in MATLAB. 
+
+	- To install this on MATLAB:
+	1. click on the HOME tab 
+	2. Click "Add-Ons"
+	3. search for "Computer Vision Toolbox" and install this.
 	
 
 HOW TO RUN THE CODE:
 
-	1. 
+	1. Click run.
 
 
 Problem: Adam

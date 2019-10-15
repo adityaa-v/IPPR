@@ -123,65 +123,55 @@ end
     end
 
     function [assignments, unassignedTracks, unassignedDetections] = ...
-            detectionToTrackAssignment()    
-        % Above function header returns output from other functions
-        nTracks = length(tracks); 
-        % Local variable for tracking
-        nDetections = size(centroids, 1); 
-        % Number of detections per tracked per centroid       
-        cost = zeros(nTracks, nDetections);
+            detectionToTrackAssignment()
+
+        nTracks = length(tracks);
+        nDetections = size(centroids, 1);
+
         % Compute the cost of assigning each detection to each track.
-        % Cost is negative log likelihood of a detection eqaul to a track
+        cost = zeros(nTracks, nDetections);
         for i = 1:nTracks
             cost(i, :) = distance(tracks(i).kalmanFilter, centroids);
         end
-        % For loop which uses kalmanFilter and loops through each track
+
+        % Solve the assignment problem.
         costOfNonAssignment = 20;
-        % Value of non assignment depends on the range of values returned 
-        % by the distance method of the vision.KalmanFilter. Value has been
-        % tuned experimentally.
         [assignments, unassignedTracks, unassignedDetections] = ...
             assignDetectionsToTracks(cost, costOfNonAssignment);
-        % Assigning the matrix with the values of the tack
     end
 
     function updateAssignedTracks()
-        numAssignedTracks = size(assignments, 1); 
-        % Variable for the count
-        % and age of the track by 1
+        numAssignedTracks = size(assignments, 1);
         for i = 1:numAssignedTracks
-            trackIdx = assignments(i, 1); 
-            % Assigns track ID
-            detectionIdx = assignments(i, 2); 
-            % Assigns detection ID
-            centroid = centroids(detectionIdx, :); 
-            % Assigns centroid to detection ID
+            trackIdx = assignments(i, 1);
+            detectionIdx = assignments(i, 2);
+            centroid = centroids(detectionIdx, :);
             bbox = bboxes(detectionIdx, :);
+
             % Correct the estimate of the object's location
             % using the new detection.
             correct(tracks(trackIdx).kalmanFilter, centroid);
-            % Replace predicted bounding box with detected bounding box.
+
+            % Replace predicted bounding box with detected
+            % bounding box.
             tracks(trackIdx).bbox = bbox;
+
             % Update track's age.
             tracks(trackIdx).age = tracks(trackIdx).age + 1;
+
             % Update visibility.
             tracks(trackIdx).totalVisibleCount = ...
                 tracks(trackIdx).totalVisibleCount + 1;
             tracks(trackIdx).consecutiveInvisibleCount = 0;
-            % Count for the number of visible tracks
         end
     end
 
     function updateUnassignedTracks()
         for i = 1:length(unassignedTracks)
-        % Loops through unassigned tracks
             ind = unassignedTracks(i);
-            % Variable for looping within unassignedTracks
             tracks(ind).age = tracks(ind).age + 1;
-            % Increase age by 1
             tracks(ind).consecutiveInvisibleCount = ...
                 tracks(ind).consecutiveInvisibleCount + 1;
-            % Increase consecutive invisible count by 1
         end
     end
 
@@ -189,34 +179,37 @@ end
         if isempty(tracks)
             return;
         end
-        % If tracks list is empty ignore the code underneath
+
         invisibleForTooLong = 20;
-        % Variable for limit of track being invisible
         ageThreshold = 8;
-        %Variable for age        
+
+        % Compute the fraction of the track's age for which it was visible.
         ages = [tracks(:).age];
         totalVisibleCounts = [tracks(:).totalVisibleCount];
         visibility = totalVisibleCounts ./ ages;
-        % Compute the fraction of the track's age for which it was visible           
+
+        % Find the indices of 'lost' tracks.
         lostInds = (ages < ageThreshold & visibility < 0.6) | ...
             [tracks(:).consecutiveInvisibleCount] >= invisibleForTooLong;
-        % Find the indices of 'lost' tracks by using assigned variables                
-        tracks = tracks(~lostInds);
+
         % Delete lost tracks.
+        tracks = tracks(~lostInds);
     end
 
     function createNewTracks()
         centroids = centroids(unassignedDetections, :);
         bboxes = bboxes(unassignedDetections, :);
-        % Variables for unassigned detections
+
         for i = 1:size(centroids, 1)
-        % Loop through centroids
+
             centroid = centroids(i,:);
             bbox = bboxes(i, :);
-            % looping through unassigned detections variable         
+
+            % Create a Kalman filter object.
             kalmanFilter = configureKalmanFilter('ConstantVelocity', ...
                 centroid, [200, 50], [100, 25], 100);
-            % Create a Kalman filter object.           
+
+            % Create a new track.
             newTrack = struct(...
                 'id', nextId, ...
                 'bbox', bbox, ...
@@ -224,50 +217,66 @@ end
                 'age', 1, ...
                 'totalVisibleCount', 1, ...
                 'consecutiveInvisibleCount', 0);
-            % Create a new track.
-            tracks(end + 1) = newTrack;
+
             % Add it to the array of tracks.
-            nextId = nextId + 1;
+            tracks(end + 1) = newTrack;
+
             % Increment the next id.
+            nextId = nextId + 1;
         end
     end
 
-    function displayTrackingResults()        
+    function displayTrackingResults()
+        % Convert the frame and the mask to uint8 RGB.
         frame = im2uint8(frame);
         mask = uint8(repmat(mask, [1, 1, 3])) .* 255;
-        % Convert the frame and the mask to uint8 RGB
-        minVisibleCount = 8; % Variable for min visible count
-        if ~isempty(tracks) % if condition true when tracks is not a field           
-            reliableTrackInds = ...
-                [tracks(:).totalVisibleCount] > minVisibleCount;
-            reliableTracks = tracks(reliableTrackInds);
+
+        minVisibleCount = 8;
+        if ~isempty(tracks)
+
             % Noisy detections tend to result in short-lived tracks.
             % Only display tracks that have been visible for more than
             % a minimum number of frames.
+            reliableTrackInds = ...
+                [tracks(:).totalVisibleCount] > minVisibleCount;
+            reliableTracks = tracks(reliableTrackInds);
 
             % Display the objects. If an object has not been detected
             % in this frame, display its predicted bounding box.
             if ~isempty(reliableTracks)
-                % Get bounding boxes.
+                % Get bounding boxes for video player
                 bboxes = cat(1, reliableTracks.bbox);
-                ids = int32([reliableTracks(:).id]);% Displays ID's                
-                labels = cellstr(int2str(ids'));
+
+                % Get ids from function that found tracks
+                ids = int32([reliableTracks(:).id]);
+
                 % Create labels for objects indicating the ones for
                 % which we display the predicted rather than the actual
                 % location
+                labels = cellstr(int2str(ids'));
+                % Only adds to matrix if the tracks and count are greater
+                % than 0
                 predictedTrackInds = ...
                     [reliableTracks(:).consecutiveInvisibleCount] > 0;
                 isPredicted = cell(size(labels));
                 isPredicted(predictedTrackInds) = {' predicted'};
-                labels = strcat(labels, isPredicted);               
+                labels = strcat(labels, isPredicted);
+
+                % Draw the objects on the frame
                 frame = insertObjectAnnotation(frame, 'rectangle', ...
-                    bboxes, labels); % Draw the objects on the frame      
+                    bboxes, labels);
+
+                % Draw the objects on the mask
                 mask = insertObjectAnnotation(mask, 'rectangle', ...
-                    bboxes, labels);% Draw the objects on the mask
+                    bboxes, labels);
             end
         end
+
         % Display the mask and the frame.
         obj.maskPlayer.step(mask);
+        % Display the video player
         obj.videoPlayer.step(frame);
     end
+
+
 end
