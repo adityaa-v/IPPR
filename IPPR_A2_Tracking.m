@@ -209,7 +209,13 @@ end
             kalmanFilter = configureKalmanFilter('ConstantVelocity', ...
                 centroid, [200, 50], [100, 25], 100);
 
-            % Create a new track.
+            % create an empty array of tracks with fields:
+            %   - ID 
+            %   - Bbox
+            %   - Kalman filter
+            %   - age
+            %   - totalVisibleCount
+            %   - consecutiveInvisibleCount            
             newTrack = struct(...
                 'id', nextId, ...
                 'bbox', bbox, ...
@@ -239,6 +245,7 @@ end
             % a minimum number of frames.
             reliableTrackInds = ...
                 [tracks(:).totalVisibleCount] > minVisibleCount;
+            % Set variable equal to tracks
             reliableTracks = tracks(reliableTrackInds);
 
             % Display the objects. If an object has not been detected
