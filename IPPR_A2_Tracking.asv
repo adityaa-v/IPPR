@@ -216,19 +216,9 @@ end
             centroid = centroids(i,:);
             bbox = bboxes(i, :);
             % looping through unassigned detections variable         
-            % Create a Kalman filter object.
-            % This is used to track a physical object that moves at a
-            % constant velocity in an M dimension Cartesian space
             kalmanFilter = configureKalmanFilter('ConstantVelocity', ...
                 centroid, [200, 50], [100, 25], 100);
-
-            % create an empty array of tracks with fields:
-            %   - ID 
-            %   - Bbox
-            %   - Kalman filter
-            %   - age
-            %   - totalVisibleCount
-            %   - consecutiveInvisibleCount      
+            % Create a Kalman filter object.           
             newTrack = struct(...
                 'id', nextId, ...
                 'bbox', bbox, ...
@@ -244,6 +234,43 @@ end
         end
     end
 
+    function createNewTracks()
+        centroids = centroids(unassignedDetections, :);
+        bboxes = bboxes(unassignedDetections, :);
+
+        for i = 1:size(centroids, 1)
+            % List of centroid and bboxes
+            centroid = centroids(i,:);
+            bbox = bboxes(i, :);
+
+            % Create a Kalman filter object.
+            % This is used to track a physical object that moves at a
+            % constant velocity in an M dimension Cartesian space
+            kalmanFilter = configureKalmanFilter('ConstantVelocity', ...
+                centroid, [200, 50], [100, 25], 100);
+
+            % create an empty array of tracks with fields:
+            %   - ID 
+            %   - Bbox
+            %   - Kalman filter
+            %   - age
+            %   - totalVisibleCount
+            %   - consecutiveInvisibleCount            
+            newTrack = struct(...
+                'id', nextId, ...
+                'bbox', bbox, ...
+                'kalmanFilter', kalmanFilter, ...
+                'age', 1, ...
+                'totalVisibleCount', 1, ...
+                'consecutiveInvisibleCount', 0);
+
+            % Add it to the array of tracks.
+            tracks(end + 1) = newTrack;
+
+            % Increment the next id.
+            nextId = nextId + 1;
+        end
+    end
 
     function displayTrackingResults()
         % Convert the frame and the mask to uint8 RGB.
